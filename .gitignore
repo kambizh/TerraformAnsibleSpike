@@ -1,0 +1,37 @@
+# Ansible Runner artifacts - execution logs and results
+runner-test/artifacts/
+
+# Ansible logs
+ansible/logs/*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Maven build directory
+target/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+nohup.out
+
