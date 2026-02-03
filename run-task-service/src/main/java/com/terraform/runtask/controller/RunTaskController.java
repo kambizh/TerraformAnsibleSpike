@@ -56,4 +56,24 @@ public class RunTaskController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(callback);
         }
     }
+
+    @GetMapping("/run-task/test")
+    public ResponseEntity<TerraformCallback> testRunTask(
+            @RequestParam(defaultValue = "test-run") String runId,
+            @RequestParam(defaultValue = "test-workspace") String workspaceName,
+            @RequestParam(defaultValue = "test-org") String organizationName) {
+        
+        log.info("Received GET test request: run_id={}, workspace={}", runId, workspaceName);
+
+        // Build a test webhook
+        TerraformWebhook webhook = TerraformWebhook.builder()
+                .runId(runId)
+                .workspaceName(workspaceName)
+                .organizationName(organizationName)
+                .stage("post_apply")
+                .payloadVersion(1)
+                .build();
+
+        return handleRunTask(webhook);
+    }
 }

@@ -24,5 +24,4 @@ fi
 
 # Run the service
 echo "Starting service on port 8080..."
-java -jar target/run-task-service-1.0.0.jar
-
+nohup java -jar target/run-task-service-1.0.0.jar --ansible.runner.project.path=/home/ec2-user/workspace/TerraformAnsibleSpike/runner-test --ansible.runner.playbook=playbooks/test.yml --ansible.runner.inventory=inventory/hosts --ansible.runner.python.path=python3 &
