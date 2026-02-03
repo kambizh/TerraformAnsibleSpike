@@ -1,0 +1,64 @@
+---
+- name: Test Playbook - System Information and Verification
+  hosts: all
+  gather_facts: yes
+  
+  tasks:
+    - name: Display Ansible version
+      debug:
+        msg: "Ansible version: {{ ansible_version.full }}"
+    
+    - name: Display Python version
+      debug:
+        msg: "Python version: {{ ansible_python_version }}"
+    
+    - name: Display OS information
+      debug:
+        msg: |
+          Operating System: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          OS Family: {{ ansible_os_family }}
+          Kernel: {{ ansible_kernel }}
+          Architecture: {{ ansible_architecture }}
+    
+    - name: Execute hostname command
+      command: hostname
+      register: hostname_output
+      changed_when: false
+    
+    - name: Display hostname from command execution
+      debug:
+        msg: "Hostname (via command): {{ hostname_output.stdout }}"
+    
+    - name: Display hostname from facts
+      debug:
+        msg: |
+          Hostname: {{ ansible_hostname }}
+          FQDN: {{ ansible_fqdn }}
+    
+    - name: Create test marker file
+      copy:
+        content: |
+          ====================================
+          Ansible Test Marker File
+          ====================================
+          Timestamp: {{ ansible_date_time.iso8601 }}
+          Date: {{ ansible_date_time.date }}
+          Time: {{ ansible_date_time.time }}
+          
+          Host Information:
+          - Hostname: {{ ansible_hostname }}
+          - FQDN: {{ ansible_fqdn }}
+          - IP Address: {{ ansible_default_ipv4.address | default('N/A') }}
+          - Operating System: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          - Kernel: {{ ansible_kernel }}
+          - Architecture: {{ ansible_architecture }}
+          
+          Executed by user: {{ ansible_user_id }}
+          ====================================
+        dest: /tmp/ansible_test_marker_{{ ansible_date_time.iso8601_basic_short }}.txt
+        mode: '0644'
+      register: marker_file
+    
+    - name: Display marker file location
+      debug:
+        msg: "Test marker file created at: {{ marker_file.dest }}"
