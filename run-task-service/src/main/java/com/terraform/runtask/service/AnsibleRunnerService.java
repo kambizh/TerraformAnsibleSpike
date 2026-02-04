@@ -1,6 +1,8 @@
 package com.terraform.runtask.service;
 
+import com.terraform.runtask.model.TerraformCallback;
 import com.terraform.runtask.model.TerraformWebhook;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,10 @@ import java.nio.file.Paths;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AnsibleRunnerService {
+
+    private final TerraformCallbackService callbackService;
 
     @Value("${ansible.runner.project.path}")
     private String projectPath;
@@ -28,7 +33,43 @@ public class AnsibleRunnerService {
     @Value("${ansible.runner.python.path:python3.8}")
     private String pythonPath;
 
-    public boolean executePlaybook(TerraformWebhook webhook) {
+    public void executePlaybookAndCallback(TerraformWebhook webhook) {
+        long startTime = System.currentTimeMillis();
+        
+        // Execute Ansible synchronously
+        boolean success = executePlaybook(webhook);
+        
+        long executionTime = System.currentTimeMillis() - startTime;
+        log.info("Ansible execution completed in {}ms with status: {}", 
+                 executionTime, success ? "SUCCESS" : "FAILED");
+        
+        // Send callback to TFE with actual result
+        sendCallbackToTFE(webhook, success, executionTime);
+    }
+
+    private void sendCallbackToTFE(TerraformWebhook webhook, boolean success, long executionTime) {
+        if (webhook.getTaskResultCallbackUrl() == null || webhook.getTaskResultCallbackUrl().isEmpty()) {
+            log.warn("⚠️ No callback URL provided - cannot report result to TFE!");
+            return;
+        }
+
+        TerraformCallback callback = TerraformCallback.builder()
+                .status(success ? "passed" : "failed")
+                .message(success ? 
+                    String.format("Ansible playbook executed successfully (run_id: %s, execution_time: %dms)", 
+                        webhook.getRunId(), executionTime) : 
+                    String.format("Ansible playbook execution failed (run_id: %s)", webhook.getRunId()))
+                .url(getArtifactsUrl())
+                .build();
+
+        callbackService.sendCallback(
+            webhook.getTaskResultCallbackUrl(), 
+            callback, 
+            webhook.getAccessToken()
+        );
+    }
+
+    private boolean executePlaybook(TerraformWebhook webhook) {
         try {
             log.info("Executing ansible-runner for run: {}", webhook.getRunId());
 
