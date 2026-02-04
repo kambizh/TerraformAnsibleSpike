@@ -50,7 +50,9 @@ public class TerraformCallbackService {
             java.util.Map<String, Object> attributes = new java.util.HashMap<>();
             attributes.put("status", callback.getStatus());
             attributes.put("message", callback.getMessage());
-            attributes.put("url", callback.getUrl());
+            if (callback.getUrl() != null && !callback.getUrl().isEmpty()) {
+                attributes.put("url", callback.getUrl());
+            }
 
             java.util.Map<String, Object> data = new java.util.HashMap<>();
             data.put("type", "task-results");

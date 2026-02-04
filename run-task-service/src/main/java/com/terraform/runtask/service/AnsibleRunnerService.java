@@ -59,7 +59,7 @@ public class AnsibleRunnerService {
                     String.format("Ansible playbook executed successfully (run_id: %s, execution_time: %dms)", 
                         webhook.getRunId(), executionTime) : 
                     String.format("Ansible playbook execution failed (run_id: %s)", webhook.getRunId()))
-                .url(getArtifactsUrl())
+                .url(null)  // No artifacts URL - local files not accessible via HTTP
                 .build();
 
         callbackService.sendCallback(
