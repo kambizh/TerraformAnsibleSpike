@@ -3,7 +3,7 @@
 This folder is a small “smoke” Terraform configuration plus scripts that trigger a Terraform Enterprise run via the TFE API. The purpose is to validate that a **post-apply Run Task** calls your Java endpoint and triggers Ansible.
 
 ## Prerequisites
-- Access to `https://ech-10-157-151-43.mastercard.int`
+- Access to `[https://terrafrom.io](https://app.terraform.io/)`
 - TFE org `kambiz` and workspace `RunTask`
 - Workspace execution mode: Remote (or Agent)
 - Post-apply Run Task attached to the workspace
@@ -13,7 +13,7 @@ You do not need Terraform CLI for the API-driven approach; the scripts use `curl
 
 ## Configure the TFE API token
 Create a token in the UI:
-- `https://ech-10-157-151-43.mastercard.int/app/settings/tokens`
+- `https://app.terraform.io/app/settings/tokens`
 
 Save it on the VM (or wherever you run the scripts) in:
 `~/.terraform.d/credentials.tfrc.json`
@@ -21,7 +21,7 @@ Save it on the VM (or wherever you run the scripts) in:
 ```json
 {
   "credentials": {
-    "ech-10-157-151-43.mastercard.int": {
+    "": {
       "token": "<YOUR_TFE_TOKEN>"
     }
   }
