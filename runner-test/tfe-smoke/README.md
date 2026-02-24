@@ -3,7 +3,7 @@
 This folder is a small “smoke” Terraform configuration plus scripts that trigger a Terraform Enterprise run via the TFE API. The purpose is to validate that a **post-apply Run Task** calls your Java endpoint and triggers Ansible.
 
 ## Prerequisites
-- Access to `[https://terrafrom.io](https://app.terraform.io/)`
+- Access to `https://app.terraform.io/`
 - TFE org `kambiz` and workspace `RunTask`
 - Workspace execution mode: Remote (or Agent)
 - Post-apply Run Task attached to the workspace
